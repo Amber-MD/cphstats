@@ -24,10 +24,10 @@ if len(arg) < 1 and not 'CC' in os.environ and not 'CXX' in os.environ:
    parser.print_help()
    sys.exit(1)
 elif 'CXX' in os.environ:
-   if 'g++' in os.environ['CXX']:
-      arg.append('gcc')
-   elif 'clang++' in os.environ['CXX']:
+   if 'clang++' in os.environ['CXX']:
       arg.append('clang')
+   elif 'g++' in os.environ['CXX']:
+      arg.append('gcc')
    elif 'icpc' in os.environ['CXX']:
       arg.append('intel')
    else:
@@ -43,7 +43,7 @@ elif 'CC' in os.environ:
       sys.stderr.write('Unrecognized C compiler %s' % os.environ['CXX'])
 else:
    sys.stderr.write('No compiler provided or detected from the environment.\n')
-
+   
 if len(arg) > 1:
    sys.stderr.write("Too many command-line arguments found.\n")
    parser.print_help()
@@ -78,6 +78,7 @@ if arg[0].lower() in ('gnu', 'gcc'):
       ldflags.append('-g')
 
 elif arg[0].lower() == 'clang':
+
    # clang compilers
    cpp = 'clang++'
    f90 = 'gfortran'

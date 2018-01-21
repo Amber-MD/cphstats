@@ -1,9 +1,26 @@
 language: cpp
 addons:
   apt:
+    sources:
+      - george-edison55-precise-backports
     packages:
       - gfortran
       - bc
+      - cmake-data
+      - cmake
+
+env:
+  - USE_CMAKE=0
+  - USE_CMAKE=1
+  
 compiler:
-    - gcc
-    - clang
+  - gcc
+  - clang
+
+install:
+  - ./travis_build.sh
+
+script:
+  - cd test_ph && ./testall.sh
+  - cd ..
+  - cd test_redox && ./testall.sh
