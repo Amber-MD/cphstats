@@ -25,7 +25,7 @@ pKa_(false),
 debug_(false),
 expert_(false)
 {
-   
+
    // Initialize some strings
    runavgout_ = string("running_avgs.dat");
    cumout_ = string("cumulative.dat");
@@ -233,10 +233,10 @@ void CLOptions::Help() {
    cout << "Input Files and Options:" << endl;
 #ifdef REDOX
    cout << "    -i FILE, --cein FILE" << endl;
-   cout << "                   Input cein file (from pmemd or sander) with titrating residue" << endl;
+   cout << "                   Input cein or cpein file (from pmemd or sander) with titrating residue" << endl;
 #else
    cout << "    -i FILE, --cpin FILE" << endl;
-   cout << "                   Input cpin file (from pmemd or sander) with titrating residue" << endl;
+   cout << "                   Input cpin or cpein file (from pmemd or sander) with titrating residue" << endl;
 #endif
    cout << "                   information." << endl;
    cout << "    -t FLOAT, --time-step FLOAT" << endl;
@@ -385,14 +385,14 @@ void CLOptions::Help() {
 
 void CLOptions::Usage() {
 #ifdef REDOX
-   cout << "Usage: " << prog_ << " [-O] [-V] [-h] [-i <cein>] [-t] [-o FILE] [-R FILE -r INT]" << endl;
+   cout << "Usage: " << prog_ << " [-O] [-V] [-h] [-i <cein or cpein>] [-t] [-o FILE] [-R FILE -r INT]" << endl;
    cout << "             [--chunk INT --chunk-out FILE] [--cumulative --cumulative-out FILE]" << endl;
    cout << "             [-v INT] [-n INT] [-p|-d] [--calceo|--no-calceo] [--fix-remd]" << endl;
    cout << "             [--population FILE] [-c CONDITION -c CONDITION -c ...]" << endl;
    cout << "             [--conditional-output FILE] [--chunk-conditional FILE]" << endl;
    cout << "             ceout1 [ceout2 [ceout3 ...] ]" << endl;
 #else
-   cout << "Usage: " << prog_ << " [-O] [-V] [-h] [-i <cpin>] [-t] [-o FILE] [-R FILE -r INT]" << endl;
+   cout << "Usage: " << prog_ << " [-O] [-V] [-h] [-i <cpin or cpein>] [-t] [-o FILE] [-R FILE -r INT]" << endl;
    cout << "             [--chunk INT --chunk-out FILE] [--cumulative --cumulative-out FILE]" << endl;
    cout << "             [-v INT] [-n INT] [-p|-d] [--calcpka|--no-calcpka] [--fix-remd]" << endl;
    cout << "             [--population FILE] [-c CONDITION -c CONDITION -c ...]" << endl;
@@ -490,7 +490,7 @@ int CLOptions::CheckInput() {
    // Make sure we provided a prefix and didn't accidentally just dump a bunch
    // of cpout files on the command line without a prefix
    if (!reorder_prefix_.empty() && fexists(reorder_prefix_)) {
-      cerr << "--------| Interpreting " << reorder_prefix_ << " as the new REMD file prefix. " 
+      cerr << "--------| Interpreting " << reorder_prefix_ << " as the new REMD file prefix. "
            << "If this is" << endl;
       cerr << "Warning | a cpout file, kill this program and re-run with a correct" << endl;
       cerr << "--------| REMD file prefix." << endl;

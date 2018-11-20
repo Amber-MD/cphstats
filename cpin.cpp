@@ -3,6 +3,7 @@
   */
 
 #include <iostream>
+#include <fstream>
 
 #include "constants.h"
 #include "cpin.h"
@@ -13,21 +14,29 @@ using namespace std;
 
 /// Cpin constructor from a char array
 Cpin::Cpin() :
-is_valid_(false)
+is_valid_(false),
+is_cpin_(true)
 { }
-   
+
 int Cpin::Parse(const char* cpinname) {
    filename_ = string(cpinname);
    if (filename_.size() > FN_LEN)
-      throw StringBufferOverflow("File name [[ " + filename_ + 
+      throw StringBufferOverflow("File name [[ " + filename_ +
             " ]] too large. Adjust FN_LEN in cpin.h and parse_cpin.F90 and recompile");
    char *my_fname = (char*) filename_.c_str();
    char resname[TITR_RES_C+1][40];
    int ierr;
+   ifstream inFile(my_fname);
+   string firstline;
+   getline(inFile, firstline);
+   if (firstline == "&CNSTPHE")
+   {
+     is_cpin_ = false;
+   }
 #ifdef REDOX
-   parse_cein_(&trescnt_, protcnt_, stateinf_, resname, my_fname, &ierr);
+   parse_cein_(&trescnt_, protcnt_, stateinf_, resname, my_fname, &is_cpin_, &ierr);
 #else
-   parse_cpin_(&trescnt_, protcnt_, stateinf_, resname, my_fname, &ierr);
+   parse_cpin_(&trescnt_, protcnt_, stateinf_, resname, my_fname, &is_cpin_, &ierr);
 #endif
 
    // Error catch
