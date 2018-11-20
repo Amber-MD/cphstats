@@ -12,6 +12,7 @@
 #  include "zlib.h"
 #endif
 
+#include "cpin.h"
 #include "constants.h"
 
 typedef struct {
@@ -35,9 +36,9 @@ class CpoutFile {
       enum FileType {ASCII=0, BZIP, GZIP};
 
       // Constructors
-      CpoutFile(std::string const&);
-      CpoutFile(const char*);
-      
+      CpoutFile(Cpin*, std::string const&);
+      CpoutFile(Cpin*, const char*);
+
       // Getters
       bool Valid() const     { return valid_;           }
       bool Done() const      { return !valid_ || done_; }
@@ -68,6 +69,10 @@ class CpoutFile {
       Record GetRecord();
 
    private:
+
+      // Cpin file
+      Cpin *cpin_;
+
       // Auto-dispatch
       int Gets(char* c, int i) { if (type_ == ASCII) return AsciiGets(c, i);
 #                                ifdef HASGZ
@@ -102,6 +107,7 @@ class CpoutFile {
 
       std::string filename_; // Original file name
       bool valid_;       // Is this a valid file?
+      bool check_;       // Variable used to check some if statements
       bool done_;        // Is this file done reading?
       float orig_ph_;    // pH on the opening full record
 #ifdef REDOX

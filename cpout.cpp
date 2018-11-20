@@ -10,7 +10,7 @@
 
 using namespace std;
 
-CpoutFile::CpoutFile(string const& fname) :
+CpoutFile::CpoutFile(Cpin* cpin, string const& fname) :
 fp_(NULL),
 type_(ASCII),
 valid_(true),
@@ -23,7 +23,7 @@ step_size_(0),
 nres_(0),
 remd_file_(false)
 {
-   
+
    filename_ = fname;
    if (fname.find_last_of(".") != string::npos) {
       // Get the suffix
@@ -43,7 +43,7 @@ remd_file_(false)
          cerr << "Failed opening " << fname << " for reading." << endl;
          valid_ = false;
       }
-         
+
   }else if (type_ == GZIP) {
 #     ifdef HASGZ
       gzfp_ = gzopen(fname.c_str(), "r");
@@ -63,18 +63,34 @@ remd_file_(false)
       Close();
       valid_ = false;
   }else if (valid_) {
+      float trash1;
 #ifdef REDOX
-      if (sscanf(buf, "Redox potential: %f V Temperature: %f K\n", &orig_ph_, &orig_temp0_) == 2) {
+      if (cpin->isCpin()) {
+        check_ = (sscanf(buf, "Redox potential: %f V Temperature: %f K\n", &orig_ph_, &orig_temp0_) == 2);
+      }else {
+        check_ = (sscanf(buf, "Solvent pH: %f Redox potential: %f V Temperature: %f K\n", &trash1, &orig_ph_, &orig_temp0_) == 3);
+      }
+      if (check_) {
 #else
-      if (sscanf(buf, "Solvent pH: %f\n", &orig_ph_) == 1) {
+      float trash2;
+      if (cpin->isCpin()) {
+        check_ = (sscanf(buf, "Solvent pH: %f\n", &orig_ph_) == 1);
+      }else {
+        check_ = (sscanf(buf, "Solvent pH: %f Redox potential: %f V Temperature: %f K\n", &orig_ph_, &trash1, &trash2) == 3);
+      }
+      if (check_) {
 #endif
          Gets(buf, LINEBUF);
          if (sscanf(buf, "Monte Carlo step size: %d\n", &step_size_) != 1) {
+            if (cpin->isCpin()) {
 #ifdef REDOX
-            cerr << "Did not recognize the format of ceout " << fname << "." << endl;
+              cerr << "Did not recognize the format of ceout " << fname << "." << endl;
 #else
-            cerr << "Did not recognize the format of cpout " << fname << "." << endl;
+              cerr << "Did not recognize the format of cpout " << fname << "." << endl;
 #endif
+            }else {
+              cerr << "Did not recognize the format of cpeout " << fname << "." << endl;
+            }
             valid_ = false;
             Close();
          }
@@ -82,11 +98,15 @@ remd_file_(false)
          Gets(buf, LINEBUF); // Time
          // Get the starting time
          if (valid_ && sscanf(buf, "Time: %f\n", &start_time_) != 1) {
+            if (cpin->isCpin()) {
 #ifdef REDOX
-            cerr << "Did not recognize the format of ceout " << fname << "." << endl;
+              cerr << "Did not recognize the format of ceout " << fname << "." << endl;
 #else
-            cerr << "Did not recognize the format of cpout " << fname << "." << endl;
+              cerr << "Did not recognize the format of cpout " << fname << "." << endl;
 #endif
+            }else {
+              cerr << "Did not recognize the format of cpeout " << fname << "." << endl;
+            }
             valid_ = false;
             Close();
          }
@@ -116,19 +136,23 @@ remd_file_(false)
             Rewind();
          }
      }else {
+         if (cpin->isCpin()) {
 #ifdef REDOX
-         cerr << "Did not recognize the format of ceout " << fname << "." << endl;
+           cerr << "Did not recognize the format of ceout " << fname << "." << endl;
 #else
-         cerr << "Did not recognize the format of cpout " << fname << "." << endl;
+           cerr << "Did not recognize the format of cpout " << fname << "." << endl;
 #endif
+         }else {
+           cerr << "Did not recognize the format of cpeout " << fname << "." << endl;
+         }
          Close();
          valid_ = false;
       }
    }
 }
 
-CpoutFile::CpoutFile(const char* fname) {
-   CpoutFile(string(fname));
+CpoutFile::CpoutFile(Cpin* cpin, const char* fname) {
+   CpoutFile(cpin, string(fname));
 }
 #ifdef HASGZ
 int CpoutFile::GzGets(char* str, int num) {
@@ -153,17 +177,28 @@ Record CpoutFile::GetRecord() {
    }
    Record result;
    float pH;
+   float trash1;
 #ifdef REDOX
    float temp0;
+#else
+   float trash2;
 #endif
    int res;
    int state;
    result.pH = 0.0f;
    result.full = false;
 #ifdef REDOX
-   if (sscanf(buf, "Redox potential: %f V Temperature: %f K\n", &pH, &temp0) == 2) {
+   check_ = (sscanf(buf, "Redox potential: %f V Temperature: %f K\n", &pH, &temp0) == 2);
+   if (!check_) {
+     check_ = (sscanf(buf, "Solvent pH: %f Redox potential: %f V Temperature: %f K\n", &trash1, &pH, &temp0) == 3);
+   }
+   if (check_) {
 #else
-   if (sscanf(buf, "Solvent pH: %f\n", &pH) == 1) {
+   check_ = (sscanf(buf, "Solvent pH: %f\n", &pH) == 1);
+   if (!check_) {
+     check_ = (sscanf(buf, "Solvent pH: %f Redox potential: %f V Temperature: %f K\n", &pH, &trash1, &trash2) == 3);
+   }
+   if (check_) {
 #endif
       result.full = true;
       result.pH = pH;

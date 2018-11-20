@@ -16,4 +16,4 @@ string_manip.cpp: constants.h exceptions.h string_manip.h
 cpout.cpp: cpout.h exceptions.h string_manip.h
 test.h: cloptions.h cpout.h
 prottraj.h: conprob.h cpin.h cpout.h types.h
-cpout.h: constants.h
+cpout.h: cpin.h constants.h
