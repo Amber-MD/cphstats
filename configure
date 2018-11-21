@@ -43,7 +43,7 @@ elif 'CC' in os.environ:
       sys.stderr.write('Unrecognized C compiler %s' % os.environ['CXX'])
 else:
    sys.stderr.write('No compiler provided or detected from the environment.\n')
-   
+
 if len(arg) > 1:
    sys.stderr.write("Too many command-line arguments found.\n")
    parser.print_help()
@@ -144,6 +144,6 @@ CXXFLAGS = %(cppflags)s
 LDFLAGS = %(ldflags)s
 
 # Where program gets installed
-BASEDIR = %(prefix)s
+BINDIR = %(prefix)s
 """ % confighopts)
 f.close()
