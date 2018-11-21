@@ -48,11 +48,11 @@ int main(int argc, char**argv) {
       }
       if ( my_cpin.Parse(clopt.Cpin()) )
          return 1;
-   
+
       nres = (int) my_cpin.getTrescnt();
 
       if (nres <= 0) {
-         cerr << "Error: Did not detect any residues in " << 
+         cerr << "Error: Did not detect any residues in " <<
                  clopt.Cpin() << endl;
          return 1;
       }
@@ -61,14 +61,21 @@ int main(int argc, char**argv) {
                  my_cpin.getFilename() << ":" << endl;
          cout << "They are:" << endl;
          for (Cpin::ResIterator it = my_cpin.begin(); it != my_cpin.end(); it++) {
-            cout << "\t" << setw(3) << it->getResname() << left << " " << 
-                    setw(3) << it->getResnum() << " (" << it->numStates() 
+            cout << "\t" << setw(3) << it->getResname() << left << " " <<
+                    setw(3) << it->getResnum() << " (" << it->numStates()
                     << " states) [ ";
             for (int j = 0; j < it->numStates(); j++) {
+#ifdef REDOX
+               if (it->isProtonated(j))
+                  cout << "R ";
+               else
+                  cout << "O ";
+#else
                if (it->isProtonated(j))
                   cout << "P ";
                else
                   cout << "D ";
+#endif
             }
             cout << "]" << endl;
          }
@@ -78,7 +85,7 @@ int main(int argc, char**argv) {
    // Set up the cpouts
    CpoutList cpouts;
    for (CLOptions::cpout_iterator it = clopt.begin(); it != clopt.end(); it++) {
-      CpoutFile c = CpoutFile(*it);
+      CpoutFile c = CpoutFile(&my_cpin, *it);
       // Skip over invalid cpouts
       if (!c.Valid()) {
 #ifdef REDOX
@@ -111,15 +118,15 @@ int main(int argc, char**argv) {
       cpouts.push_back(c);
    }
 
-   if (clopt.Debug()) 
+   if (clopt.Debug())
 #ifdef REDOX
       cout << "Analyzing " << clopt.Cpouts().size() << " ceouts." << endl;
    if (cpouts.size() != clopt.Cpouts().size()) {
-     cerr << "Error: Number of Ceout files " << cpouts.size() << 
+     cerr << "Error: Number of Ceout files " << cpouts.size() <<
 #else
       cout << "Analyzing " << clopt.Cpouts().size() << " cpouts." << endl;
    if (cpouts.size() != clopt.Cpouts().size()) {
-     cerr << "Error: Number of Cpout files " << cpouts.size() << 
+     cerr << "Error: Number of Cpout files " << cpouts.size() <<
 #endif
              " does not equal number specified: " << clopt.Cpouts().size() << endl;
      return 1;
@@ -156,7 +163,7 @@ int main(int argc, char**argv) {
    if (clopt.ChunkWindow() > 0)
       stats.PrintChunks(clopt.ChunkWindow(), clopt.ChunkOutput(),
                         clopt.PrintProtonated() && !clopt.pKa(), clopt.pKa());
-   
+
    // Do cumulative analysis
    if (clopt.doCumulative())
       stats.PrintCumulative(clopt.CumulativeOutput(), clopt.Interval(),
@@ -164,7 +171,7 @@ int main(int argc, char**argv) {
 
    // Do running averages
    if (clopt.RunningAvgWindow() > 0)
-      stats.PrintRunningAvg(clopt.RunningAvgWindow(), clopt.Interval(), 
+      stats.PrintRunningAvg(clopt.RunningAvgWindow(), clopt.Interval(),
                         clopt.RunningAvgOutput(),
                         clopt.PrintProtonated() && !clopt.pKa(), clopt.pKa());
 
@@ -174,7 +181,7 @@ int main(int argc, char**argv) {
 
    // Do conditional probabilities
    if (clopt.CondProbs().size() > 0) {
-      for (CLOptions::prob_iterator it = clopt.condbegin(); 
+      for (CLOptions::prob_iterator it = clopt.condbegin();
                                     it != clopt.condend(); it++)
          if (it->Set(my_cpin) == ConditionalProb::ERR) {
             cerr << "Quitting due to errors above." << endl;

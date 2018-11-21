@@ -1,0 +1,10 @@
+There are 1 titratable residues defined in tyx.cpein:
+They are:
+	TYX 2   (4 states) [ P P D D ]
+Added [[ tyx.cpeout ]] to cpout list.
+Analyzing 1 cpouts.
+Solvent pH is 10.000  
+TYX 2   : Offset -0.543  Pred  9.457  Frac Prot 0.223 Transitions    246821
+
+Average total molecular protonation:   0.223
+All done!
