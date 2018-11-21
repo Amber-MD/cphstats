@@ -14,10 +14,10 @@ typedef struct {
 extern "C" {
 #ifdef REDOX
    void parse_cein_(int*, int[TITR_STATES_C], StateInfo[TITR_RES_C],
-                        char[TITR_RES_C+1][40], char[FN_LEN], bool*, int*);
+                        char[TITR_RES_C+1][40], char[FN_LEN], int*, int*);
 #else
    void parse_cpin_(int*, int[TITR_STATES_C], StateInfo[TITR_RES_C],
-                        char[TITR_RES_C+1][40], char[FN_LEN], bool*, int*);
+                        char[TITR_RES_C+1][40], char[FN_LEN], int*, int*);
 #endif
 }
 
@@ -103,14 +103,14 @@ class Cpin {
 
       bool isRead() const { return is_valid_; }
 
-      bool isCpin() const { return is_cpin_; }
+      bool isCpin() const { return is_cpin_ == 1; }
 
    private:
       /// Is our cpin file valid?
       bool is_valid_;
 
       /// Is the input file a cpin file? If not, it is a cpein
-      bool is_cpin_;
+      int is_cpin_;
 
       /// CpHMD state info array (analogous to the one used in sander)
       StateInfo stateinf_[TITR_RES_C];

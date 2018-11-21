@@ -30,7 +30,7 @@ subroutine parse_cpin(trescnt, protcnt, stateinf, resname, cpin_name, is_cpin, i
    ! The namelist variables
 
    integer             :: trescnt
-   logical             :: is_cpin
+   integer             :: is_cpin
    integer             :: protcnt(0:TITR_STATES_C-1)
    integer             :: eleccnt(0:TITR_STATES_C-1)
    integer             :: resstate(0:TITR_RES_C-1)
@@ -127,27 +127,39 @@ subroutine parse_cpin(trescnt, protcnt, stateinf, resname, cpin_name, is_cpin, i
 #ifdef REDOX
    ! Open the unit, bailing on error
    open(unit=CEIN_UNIT, file=cein_name, status='OLD', iostat=ierr)
-   if (ierr .ne. 0) return
+   if (ierr .ne. 0) then
+      write(0, '(a)') 'Failed opening the file'
+      return
+   end if
 
    ! Read the namelist, bailing on error
-   if (is_cpin) then
+   if (is_cpin .eq. 1) then
      read(CEIN_UNIT, nml=cnste, iostat=ierr)
    else
      read(CEIN_UNIT, nml=cnstphe, iostat=ierr)
    end if
-   if (ierr .ne. 0) return
+   if (ierr .ne. 0) then
+      write(0, '(a)') 'Failed reading the file'
+      return
+   end if
 #else
    ! Open the unit, bailing on error
    open(unit=CPIN_UNIT, file=cpin_name, status='OLD', iostat=ierr)
-   if (ierr .ne. 0) return
+   if (ierr .ne. 0) then
+      write(0, '(a)') 'Failed opening the file'
+      return
+   end if
 
    ! Read the namelist, bailing on error
-   if (is_cpin) then
+   if (is_cpin .eq. 1) then
      read(CPIN_UNIT, nml=cnstph, iostat=ierr)
    else
      read(CPIN_UNIT, nml=cnstphe, iostat=ierr)
    end if
-   if (ierr .ne. 0) return
+   if (ierr .ne. 0) then
+      write(0, '(a)') 'Failed reading the file'
+      return
+   end if
 #endif
 
    ! If we got this far, then our file is read

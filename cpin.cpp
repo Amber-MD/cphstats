@@ -15,7 +15,7 @@ using namespace std;
 /// Cpin constructor from a char array
 Cpin::Cpin() :
 is_valid_(false),
-is_cpin_(true)
+is_cpin_(1)
 { }
 
 int Cpin::Parse(const char* cpinname) {
@@ -31,7 +31,7 @@ int Cpin::Parse(const char* cpinname) {
    getline(inFile, firstline);
    if (firstline == "&CNSTPHE")
    {
-     is_cpin_ = false;
+     is_cpin_ = 0;
    }
 #ifdef REDOX
    parse_cein_(&trescnt_, protcnt_, stateinf_, resname, my_fname, &is_cpin_, &ierr);
