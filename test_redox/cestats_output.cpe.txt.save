@@ -1,0 +1,10 @@
+There are 1 titratable residues defined in tyx.cpein:
+They are:
+	TYX 2   (4 states) [ R O R O ]
+Added [[ tyx.cpeout ]] to ceout list.
+Analyzing 1 ceouts.
+Redox potential is 0.69200   V, temperature is 300.00    K
+TYX 2   : Offset 0.02701 V  Pred Eo 0.71901 V  Frac Redu 0.73978  Transitions    269568
+
+Average total molecular reduction: 0.73978
+All done!

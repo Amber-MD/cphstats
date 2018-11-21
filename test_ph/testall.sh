@@ -148,6 +148,11 @@ $EXE -O -i 1AKI.dry.equil.cpin md?_cpout.pH_4.00 \
 compare conditional.dat.save conditional.dat
 compare conditional_chunks.dat.save conditional_chunks.dat
 
+# Testing CPEIN funcitonality
+$EXE -O -i tyx.cpein tyx.cpeout --debug > cphstats_output.cpe.txt
+
+compare cphstats_output.cpe.txt.save cphstats_output.cpe.txt
+
 echo ""
 if [ $NFAIL -ne 0 ]; then
    echo "Detected $NFAIL failure(s)."

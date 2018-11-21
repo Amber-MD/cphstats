@@ -135,6 +135,11 @@ $EXE -O -i lys-iron.cein md?_ceout.E_0.81000 \
 compare conditional.dat.save conditional.dat
 compare conditional_chunks.dat.save conditional_chunks.dat
 
+# Testing CPEIN funcitonality
+$EXE -O -i tyx.cpein tyx.cpeout --debug > cestats_output.cpe.txt
+
+compare cestats_output.cpe.txt.save cestats_output.cpe.txt
+
 echo ""
 if [ $NFAIL -ne 0 ]; then
    echo "Detected $NFAIL failure(s)."
