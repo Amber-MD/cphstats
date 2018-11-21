@@ -65,10 +65,17 @@ int main(int argc, char**argv) {
                     setw(3) << it->getResnum() << " (" << it->numStates()
                     << " states) [ ";
             for (int j = 0; j < it->numStates(); j++) {
+#ifdef REDOX
+               if (it->isProtonated(j))
+                  cout << "R ";
+               else
+                  cout << "O ";
+#else
                if (it->isProtonated(j))
                   cout << "P ";
                else
                   cout << "D ";
+#endif
             }
             cout << "]" << endl;
          }
