@@ -144,6 +144,6 @@ CXXFLAGS = %(cppflags)s
 LDFLAGS = %(ldflags)s
 
 # Where program gets installed
-BINDIR = %(prefix)s
+BINDIR = %(prefix)s/bin
 """ % confighopts)
 f.close()
