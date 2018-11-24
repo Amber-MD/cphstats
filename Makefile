@@ -22,13 +22,11 @@ $(PROGNAME2): $(OBJS2)
 	$(CXX) -o $(PROGNAME2) $(OBJS2) $(LDFLAGS) $(NOFORTRANMAIN) $(ZLIB) $(BZLIB)
 
 install: $(PROGNAME) $(PROGNAME2)
-	/bin/mv $(PROGNAME) $(BINDIR)/bin
-	/bin/mv $(PROGNAME2) $(BINDIR)/bin
+	/bin/mv $(PROGNAME) $(BINDIR)
+	/bin/mv $(PROGNAME2) $(BINDIR)
 
 uninstall:
-	/bin/rm -f $(BINDIR)/bin/$(PROGNAME)
-	/bin/rm -f $(BINDIR)/bin/$(PROGNAME2)
-	/bin/rm -f config.h
+	/bin/rm -f "$(BINDIR)/$(PROGNAME)" "$(BINDIR)/$(PROGNAME2)" "config.h"
 
 .SUFFIXES: .F90 .cpp .ph.o .redox.o
 
